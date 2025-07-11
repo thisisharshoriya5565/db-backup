@@ -7,8 +7,8 @@ Add the package to the repositories section of your main Laravel app:
 ```json:
 "repositories": [
   {
-    "type": "path",
-    "url": "packages/your-vendor/db-backup"
+    "type": "vcs",
+    "url": "https://github.com/thisisharshoriya5565/db-backup"
   }
 ]
 ```
