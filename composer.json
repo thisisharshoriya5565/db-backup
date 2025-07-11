@@ -1,0 +1,24 @@
+{
+    "name": "thisisharshoriya5565/db-backup",
+    "description": "Laravel package for DB backup and restore",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Vendor\\DbBackup\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Vendor\\DbBackup\\DbBackupServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "php": ">=7.4",
+        "illuminate/support": "^8.0|^9.0|^10.0"
+    }
+}
