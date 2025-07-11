@@ -107,6 +107,6 @@ MIT – free for personal and commercial use.
 ### 🤝 Contributions & Support
 PRs are welcome. If you'd like to help improve this package or need a custom feature, feel free to open an issue or fork the repo.
 
-### 💬 Need Help or Want to Connect?
-If you have questions, need support, or want to collaborate with the developer,
+### 👨‍💻 Developer Support
+If you need help implementing this or want to connect with the developer: 
 👉 Visit: https://b2code.in/
