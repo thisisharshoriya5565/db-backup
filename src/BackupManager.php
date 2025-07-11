@@ -13,10 +13,11 @@ class BackupManager
 
         $tables = DB::select('SHOW TABLES');
         $tableNames = array_map('current', $tables);
-        dd($tableNames);
+        $dbtables = $tables ?? $tableNames;
+
         // $tables = $tables ?? DB::connection()->getDoctrineSchemaManager()->listTableNames();
 
-        foreach ($tables as $table) {
+        foreach ($dbtables as $table) {
             $data[$table] = DB::table($table)->get()->toArray();
         }
 
