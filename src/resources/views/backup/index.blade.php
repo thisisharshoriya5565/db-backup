@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('db-backup::layouts.app')
 
 @section('content')
     <ul class="space-y-4">

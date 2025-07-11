@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('db-backup::layouts.app')
 
 @section('content')
     <div class="bg-green-100 p-6 rounded shadow text-green-800">

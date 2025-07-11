@@ -21,7 +21,7 @@ Route::get('/backup/list', function () {
     $folders = Storage::allDirectories("backups/");
     $lastFolder = collect($folders)->last();
 
-    return view('backup.index', [
+    return view('db-backup::backup.index', [
         'lastFolder' => $lastFolder,
         'folders' => $folders,
         'title' => 'Database Backups'
@@ -31,7 +31,7 @@ Route::get('/backup/list', function () {
 Route::get('/restore/{folder}', function ($folder) {
     app('dbbackup.restore')->restore("backups/{$folder}");
 
-    return view('backup.restore_success', [
+    return view('db-backup::backup.restore_success', [
         'folder' => $folder,
         'title' => 'Restore Complete'
     ]);
@@ -46,7 +46,7 @@ Route::get('/backup/distroy/{folder}', function ($folder) {
 
     Storage::deleteDirectory($directory);
 
-    return view('backup.destroy_success', [
+    return view('db-backup::backup.destroy_success', [
         'folder' => $folder,
         'title' => 'Delete Complete'
     ]);
