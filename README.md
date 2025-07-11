@@ -18,7 +18,7 @@ This tells Composer to load the package from a local folder.
 RUN:
 
 ```json:
-composer require your-vendor/db-backup:dev-main
+composer require thisisharshoriya5565/db-backup:dev-main
 ```
 
 ### ✅ 3. Publish the Config File (Optional)
