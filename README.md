@@ -58,8 +58,8 @@ app('dbbackup.restore')->restore($folderPath);
 
 ## Let me know if you want to:
 
--- Zip the backup folder
--- Schedule automatic backups via cron
--- Add Artisan CLI commands (php artisan db:backup)
+- Zip the backup folder
+- Schedule automatic backups via cron
+- Add Artisan CLI commands (php artisan db:backup)
 
 I can generate that for you too.
