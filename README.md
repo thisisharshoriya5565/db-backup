@@ -59,6 +59,16 @@ $folderPath = storage_path('app/backups/2025-07-11_14-30-00');
 app('dbbackup.restore')->restore($folderPath);
 ```
 
+### 🧭 Route Guide
+| URL                        | Action              | Description                                      |
+| -------------------------- | ------------------- | ------------------------------------------------ |
+| `/backup`                  | Create Backup       | Triggers a backup and redirects to the list view |
+| `/backup/list`             | View Backup List    | Shows all available backup folders               |
+| `/restore/{folder}`        | Restore from Backup | Restores the selected backup into the database   |
+| `/backup/distroy/{folder}` | Delete Backup       | Deletes the specified backup folder              |
+
+📝 All backups are stored under: storage/app/backups
+
 ### 🧠 Smart Restore Behavior
 - ✅ Skips tables that don’t exist in the DB
 - ✅ Creates missing columns automatically
