@@ -1,6 +1,6 @@
 <?php
 
-namespace YourVendor\DbBackup;
+namespace Vendor\DbBackup;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
