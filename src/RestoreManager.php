@@ -2,54 +2,85 @@
 
 namespace Vendor\DbBackup;
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class RestoreManager
 {
     public function restore(string $path = 'backups/', bool $truncate = true)
     {
         if (!Storage::exists($path)) {
-            throw new \Exception("Backup file not found at $path");
+            throw new \Exception("Backup path not found: $path");
         }
 
-        $all_files = Storage::allFiles($path);
+        // Get all JSON backup files
+        $data = collect(Storage::allFiles($path))
+            ->filter(fn($file) => str_ends_with($file, '.json'))
+            ->mapWithKeys(function ($file) {
+                $json = json_decode(Storage::get($file), true);
+                $table = pathinfo($file, PATHINFO_FILENAME);
+                return [$table => $json];
+            });
 
-        collect($all_files)->each(function ($file_path) use ($truncate) {
-            $records = Storage::json($file_path);
-            $file_name = basename($file_path);              // 'failed_jobs.json'
-            $table = pathinfo($file_name, PATHINFO_FILENAME);  // 'failed_jobs'
+        DB::beginTransaction();
 
-            if ($truncate) {
-                DB::table($table)->truncate();
+        try {
+            Schema::disableForeignKeyConstraints();
+
+            foreach ($data as $table => $records) {
+                if (!Schema::hasTable($table)) {
+                    Log::warning("Skipping insert: Table [$table] does not exist.");
+                    continue;
+                }
+
+                if (empty($records)) {
+                    Log::info("No records to insert for table: $table");
+                    continue;
+                }
+
+                if ($truncate) {
+                    DB::table($table)->truncate();
+                }
+
+                collect($records)
+                    ->chunk(500)
+                    ->each(fn($chunk) => DB::table($table)->insert($chunk->toArray()));
+
+                Log::info("Inserted " . count($records) . " records into [$table]");
             }
 
-            $collection = collect($records);
-            if (!$collection->isEmpty()) {
-                $collection->each(function ($record) use ($table) {
-                    if (Schema::hasTable($table)) {
-                        $record = $this->syncWithCurrentSchema($table, $record);
-                        DB::table($table)->insert($record);
-                    }
-                });
-            }
-        });
-    }
+            Schema::enableForeignKeyConstraints();
 
-    protected function syncWithCurrentSchema($table, $record)
-    {
-        $columns = DB::getSchemaBuilder()->getColumnListing($table);
+            DB::commit();
 
-        // Filter out unknown keys and fill missing keys with null
-        $synced = [];
-        foreach ($columns as $column) {
-            $synced[$column] = $record[$column] ?? null;
+            Log::info("Database restore completed successfully.");
+
+            return response()->json(['message' => 'Database restore completed successfully.']);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Schema::enableForeignKeyConstraints();
+
+            Log::error("Restore aborted due to error: " . $e->getMessage());
+
+            return response()->json(['message' => 'Database restore failed.', 'error' => $e->getMessage()], 500);
         }
-
-        return $synced;
-
-        // collect('Foo\Bar\Baz')
     }
+
+    // protected function syncWithCurrentSchema($table, $record)
+    // {
+    //     $columns = DB::getSchemaBuilder()->getColumnListing($table);
+
+    //     // Filter out unknown keys and fill missing keys with null
+    //     $synced = [];
+    //     foreach ($columns as $column) {
+    //         $synced[$column] = $record[$column] ?? null;
+    //     }
+
+    //     return $synced;
+    // }
 }
