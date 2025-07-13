@@ -1,8 +1,16 @@
-# 📦 Laravel DB Backup/Restore Package – Installation Guide
-This package allows you to back up and restore your database by exporting each table as a separate .json file inside a timestamped folder.
+# 📦 Laravel DB Backup/Restore Package
+Easily backup and restore your Laravel database using simple commands or service calls. Each table is saved as a .json file inside a timestamped folder, making the backup format readable, versionable, and portable.
 
-### ✅ 1. Update Laravel Project composer.json
-Add the package to the repositories section of your main Laravel app:
+### 🚀 Features
+- 🔄 Backup all or selected tables
+- 💾 Each table saved as .json file
+- 🧠 Smart restore handles schema differences
+- 📁 Backups stored in storage/app/backups
+-🔌 Simple API for custom UIs, routes, or Artisan commands
+
+### 🛠️ Installation
+#### 1. Add VCS Repository
+Add this to your Laravel project’s composer.json:
 
 ```json:
 "repositories": [
@@ -14,52 +22,91 @@ Add the package to the repositories section of your main Laravel app:
 ```
 This tells Composer to load the package from a local folder.
 
-### ✅ 2. Install the Package via Composer
+### 2. Install via Composer
 RUN:
 
 ```json:
 composer require thisisharshoriya5565/db-backup:dev-main
 ```
 
-### ✅ 3. Publish the Config File (Optional)
+### 3. (Optional) Publish the Config File
 ```bash:
 php artisan vendor:publish --provider="YourVendor\DbBackup\DbBackupServiceProvider"
 ```
 
-This will create:
+This creates the config file:
 ```arduino:
 config/dbbackup.php
 ```
-You can configure the default backup folder path there.
+You can configure the default backup directory here.
 
-### ✅ 4. How to Use the Package
+## ⚙️ Usage
 ### ▶ Backup All Tables
 ```php:
 $path = app('dbbackup.backup')->backup();
-// Returns backup folder path like: storage/app/backups/2025-07-11_14-30-00/
+// Example: storage/app/backups/2025-07-11_14-30-00/
 ```
 
 ### ▶ Backup Specific Tables
 ```php:
-$tables = ['users', 'admins'];
-app('dbbackup.backup')->backup($tables);
+$tables = ['users', 'orders'];
+$path = app('dbbackup.backup')->backup($tables);
 ```
 
-### ▶ Restore Backup from Folder
+### ▶ Restore From a Backup
 ```php:
 $folderPath = storage_path('app/backups/2025-07-11_14-30-00');
 app('dbbackup.restore')->restore($folderPath);
 ```
 
-### 🛡️ Smart Restore Behavior
-- Handles new or missing columns
-- Skips non-existing tables
-- Truncates tables before inserting (can be toggled)
+### 🧭 Route Guide
+| URL                        | Action              | Description                                      |
+| -------------------------- | ------------------- | ------------------------------------------------ |
+| `/backup`                  | Create Backup       | Triggers a backup and redirects to the list view |
+| `/backup/list`             | View Backup List    | Shows all available backup folders               |
+| `/restore/{folder}`        | Restore from Backup | Restores the selected backup into the database   |
+| `/backup/distroy/{folder}` | Delete Backup       | Deletes the specified backup folder              |
 
-### Let me know if you want to:
+📝 All backups are stored under: storage/app/backups
 
-- Zip the backup folder
-- Schedule automatic backups via cron
-- Add Artisan CLI commands (php artisan db:backup)
+### 🧠 Smart Restore Behavior
+- ✅ Skips tables that don’t exist in the DB
+- ✅ Creates missing columns automatically
+- ✅ Truncates tables before restore (can be configured)
+- ❌ Does not delete extra columns or drop tables
 
-I can generate that for you too.
+### 🔧 Custom Integration Options
+#### You can build your own:
+
+- 🌐 Web interface for managing backups
+- 🖥️ Artisan CLI commands (e.g. php artisan db:backup)
+- ⏰ Scheduled backups using Laravel Task Scheduler
+- 📦 ZIP compression of backup folders
+- 📧 Email or upload to cloud storage
+  
+  Let me know if you'd like a pre-built version of any of these.
+
+### 🧪 Example: Listing Backup Folders
+```php
+$folders = Storage::allDirectories('backups');
+```
+
+### 🧪 Example: Deleting a Backup
+```php
+Storage::deleteDirectory('backups/2025-07-11_14-30-00');
+```
+
+### 🧩 Compatibility
+- Laravel 8, 9, 10+
+- Works with MySQL, PostgreSQL, SQLite
+- Uses Laravel's Storage facade
+
+### 📄 License
+MIT – free for personal and commercial use.
+
+### 🤝 Contributions & Support
+PRs are welcome. If you'd like to help improve this package or need a custom feature, feel free to open an issue or fork the repo.
+
+### 👨‍💻 Developer Support
+If you need help implementing this or want to connect with the developer: 
+👉 Visit: https://b2code.in/
