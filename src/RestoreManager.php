@@ -49,5 +49,7 @@ class RestoreManager
         }
 
         return $synced;
+
+        // collect('Foo\Bar\Baz')
     }
 }
