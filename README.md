@@ -17,7 +17,19 @@ You can publish and customize the middleware stack like this:
 1. Publish config:
    ```bash
    php artisan vendor:publish --tag=your-package-config
+   ```
+2. Edit config/dbbackup.php:
+   ```php
+   return [
+    'middleware' => ['web', 'auth'], // authenticated users only
 
+    // or for guests:
+    // 'middleware' => ['web', 'guest'],
+
+    // or unrestricted:
+    // 'middleware' => ['web'],
+];
+```
 
 ### 🛠️ Installation
 #### 1. Add VCS Repository
