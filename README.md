@@ -8,6 +8,29 @@ Easily backup and restore your Laravel database using simple commands or service
 - 📁 Backups stored in storage/app/backups
 -🔌 Simple API for custom UIs, routes, or Artisan commands
 
+### 🔐 Optional Middleware Configuration
+
+By default, the `/backup/*` routes use only the `web` middleware.
+
+You can publish and customize the middleware stack like this:
+
+1. Publish config:
+   ```bash
+   php artisan vendor:publish --tag=db-backup-config
+   ```
+2. Edit config/dbbackup.php:
+   ```php
+   return [
+    'middleware' => ['web', 'auth'], // authenticated users only
+
+    // or for guests:
+    // 'middleware' => ['web', 'guest'],
+
+    // or unrestricted:
+    // 'middleware' => ['web'],
+   ];
+```
+
 ### 🛠️ Installation
 #### 1. Add VCS Repository
 Add this to your Laravel project’s composer.json:
@@ -31,7 +54,7 @@ composer require thisisharshoriya5565/db-backup:dev-main
 
 ### 3. (Optional) Publish the Config File
 ```bash:
-php artisan vendor:publish --provider="YourVendor\DbBackup\DbBackupServiceProvider"
+php artisan vendor:publish --provider="Vendor\DbBackup\DbBackupServiceProvider"
 ```
 
 This creates the config file:
