@@ -8,6 +8,17 @@ Easily backup and restore your Laravel database using simple commands or service
 - 📁 Backups stored in storage/app/backups
 -🔌 Simple API for custom UIs, routes, or Artisan commands
 
+### 🔐 Optional Middleware Configuration
+
+By default, the `/backup/*` routes use only the `web` middleware.
+
+You can publish and customize the middleware stack like this:
+
+1. Publish config:
+   ```bash
+   php artisan vendor:publish --tag=your-package-config
+
+
 ### 🛠️ Installation
 #### 1. Add VCS Repository
 Add this to your Laravel project’s composer.json:
