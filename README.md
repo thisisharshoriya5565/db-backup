@@ -28,7 +28,7 @@ You can publish and customize the middleware stack like this:
 
     // or unrestricted:
     // 'middleware' => ['web'],
-];
+   ];
 ```
 
 ### 🛠️ Installation
