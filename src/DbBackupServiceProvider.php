@@ -19,7 +19,7 @@ class DbBackupServiceProvider extends ServiceProvider
             __DIR__ . '/../config/dbbackup.php',
             'dbbackup'
         );
-        $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
+        $this->loadRoutesFrom(__DIR__ . '/routes/backup.php');
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'db-backup');
 
         $this->app->singleton('dbbackup.backup', BackupManager::class);
