@@ -16,7 +16,7 @@ You can publish and customize the middleware stack like this:
 
 1. Publish config:
    ```bash
-   php artisan vendor:publish --tag=your-package-config
+   php artisan vendor:publish --tag=db-backup-config
    ```
 2. Edit config/dbbackup.php:
    ```php
@@ -54,7 +54,7 @@ composer require thisisharshoriya5565/db-backup:dev-main
 
 ### 3. (Optional) Publish the Config File
 ```bash:
-php artisan vendor:publish --provider="YourVendor\DbBackup\DbBackupServiceProvider"
+php artisan vendor:publish --provider="Vendor\DbBackup\DbBackupServiceProvider"
 ```
 
 This creates the config file:
