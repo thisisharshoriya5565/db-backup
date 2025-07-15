@@ -2,40 +2,58 @@
 
 namespace Vendor\DbBackup;
 
-use Carbon\Carbon;
-use Error;
+// use Carbon\Carbon;
+// use Error;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
+// use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
+// use Illuminate\Support\Str;
+
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 
 class BackupManager
 {
     public function backup(array $arr_tables = [], string $path = 'backups/')
     {
+        // Create backup directory if it doesn't exist
         if (!Storage::exists($path)) {
             Storage::makeDirectory($path);
         }
 
-        $show_all_db_tables = DB::select('SHOW TABLES');
-        $current_tables = array_map('current', $show_all_db_tables);
-        $tables = collect($arr_tables)->isEmpty() ? $current_tables : $arr_tables;
+        // Use Doctrine DBAL to get all table names
+        /** @var Connection $doctrineConn */
+        $doctrineConn = DB::getDoctrineConnection();
 
-        $date_time_format = 'Y-m-d-H-i-s';
-        $date_time = Carbon::now()->format($date_time_format);
-        $filePath = rtrim($path, '/') . "/db-{$date_time}";
+        /** @var AbstractSchemaManager $schemaManager */
+        $schemaManager = method_exists($doctrineConn, 'createSchemaManager')
+            ? $doctrineConn->createSchemaManager()
+            : $doctrineConn->getSchemaManager(); // Fallback for older DBAL versions
 
-        collect($tables)->each(function ($table) use ($filePath) {
-            if (Schema::hasTable($table)) {
-                $result_db = DB::table($table)->get()->toArray();
-                $contents = json_encode($result_db, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-                $path = rtrim($filePath, '/') . "/{$table}.json";
+        $allTables = $schemaManager->listTableNames();
 
-                Storage::put($path, $contents);
+        // Determine which tables to back up
+        $tables = empty($arr_tables) ? $allTables : array_intersect($arr_tables, $allTables);
+
+        // Prepare path with timestamp
+        $date_time = now()->format('Y-m-d-H-i-s');
+        $backupFolder = rtrim($path, '/') . "/db-{$date_time}";
+
+        // Loop through each table and store JSON data
+        foreach ($tables as $table) {
+            if (!Schema::hasTable($table)) {
+                continue;
             }
-        });
 
-        return $filePath;
+            $rows = DB::table($table)->get()->toArray();
+
+            $json = json_encode($rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            $file = "{$backupFolder}/{$table}.json";
+
+            Storage::put($file, $json);
+        }
+
+        return $backupFolder;
     }
 }
